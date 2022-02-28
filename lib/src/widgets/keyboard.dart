@@ -72,7 +72,7 @@ class _KeyboardButton extends StatelessWidget {
   const _KeyboardButton({
     Key? key,
     this.height = 48,
-    this.width = 30,
+    this.width = 32,
     required this.onTap,
     required this.backgroundColor,
     required this.letter,
@@ -86,7 +86,7 @@ class _KeyboardButton extends StatelessWidget {
 
   factory _KeyboardButton.enter({required VoidCallback onTap}) =>
       _KeyboardButton(
-        width: 56,
+        width: 60,
         onTap: onTap,
         backgroundColor: Colors.grey,
         letter: 'ENTER',
@@ -118,7 +118,7 @@ class _KeyboardButton extends StatelessWidget {
             child: Text(
               letter,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
               ),
             ),
