@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:wordle/src/data/word_list.dart';
 import 'package:wordle/src/models/letter_model.dart';
@@ -31,6 +32,15 @@ class _WordleScreenState extends State<WordleScreen> {
     ),
   );
 
+  // Flip Cards
+  final List<List<GlobalKey<FlipCardState>>> _flipCardKeys = List.generate(
+    6,
+    (_) => List.generate(
+      5,
+      (_) => GlobalKey<FlipCardState>(),
+    ),
+  );
+
   int _currentIndex = 0;
 
   Word? get _currentWord =>
@@ -57,7 +67,7 @@ class _WordleScreenState extends State<WordleScreen> {
     }
   }
 
-  void _onEnterTapped() {
+  Future<void> _onEnterTapped() async {
     if (_gameStatus == GameStatus.playing &&
         _currentWord != null &&
         !_currentWord!.letters.contains(Letter.empty())) {
@@ -90,6 +100,11 @@ class _WordleScreenState extends State<WordleScreen> {
               (element) => element.letter == currentWordLetter.letter);
           _keyboardLetters.add(_currentWord!.letters[i]);
         }
+
+        await Future.delayed(
+          Duration(milliseconds: 150),
+          () => _flipCardKeys[_currentIndex][i].currentState?.toggleCard(),
+        );
       }
 
       _checkWinOrLoss();
@@ -121,7 +136,7 @@ class _WordleScreenState extends State<WordleScreen> {
         SnackBar(
           dismissDirection: DismissDirection.none,
           duration: const Duration(days: 1),
-          backgroundColor: correctLetterColor,
+          backgroundColor: Colors.red,
           content: Text(
             'You lost! Solution: ${_solution.wordString}',
             style: const TextStyle(color: Colors.white),
@@ -162,6 +177,18 @@ class _WordleScreenState extends State<WordleScreen> {
             words[Random().nextInt(words.length)].toUpperCase());
 
         _keyboardLetters.clear();
+
+        _flipCardKeys
+          ..clear()
+          ..addAll(
+            List.generate(
+              6,
+              (_) => List.generate(
+                5,
+                (_) => GlobalKey<FlipCardState>(),
+              ),
+            ),
+          );
       },
     );
   }
@@ -184,7 +211,7 @@ class _WordleScreenState extends State<WordleScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Board(board: _board),
+          Board(board: _board, flipCardKeys: _flipCardKeys),
           const SizedBox(
             height: 80,
           ),
